@@ -17,16 +17,18 @@ doc:
 
 # 编译 kernel
 kernel:
-	@cargo build
+	@cargo +nightly build
 
 # 生成 kernel 的二进制文件
 $(BIN_FILE): kernel
 	@$(OBJCOPY) $(KERNEL_FILE) --strip-all -O binary $@
 
 # 查看反汇编结果
-asm:
+asm: kernel
 	@$(OBJDUMP) -d $(KERNEL_FILE) | less
 
+head: kernel
+	@$(OBJDUMP) -h $(KERNEL_FILE) | less
 # 清理编译出的文件
 clean:
 	@cargo clean
@@ -38,6 +40,8 @@ qemu: build
             -nographic \
             -bios default \
             -device loader,file=$(BIN_FILE),addr=0x80200000
+debug: build
+	@qemu-system-riscv64 -machine virt -nographic -bios ./bootloader/rustsbi-qemu.bin -device loader,file=target/riscv64gc-unknown-none-elf/debug/kernel.bin,addr=0x80200000 -S -s
 
 # 一键运行
 run: build qemu

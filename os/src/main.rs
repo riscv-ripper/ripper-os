@@ -16,9 +16,9 @@ global_asm!(include_str!("entry.asm"));
 
 #[no_mangle]
 extern "C" fn rust_main() {
-//    console_putchar(b'O');
-//    console_putchar(b'K');
-//    console_putchar(b'\n');
+    console_putchar(b'O');
+    console_putchar(b'K');
+    console_putchar(b'\n');
     loop{};
 }
 
