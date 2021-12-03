@@ -27,21 +27,17 @@ $(BIN_FILE): kernel
 asm: kernel
 	@$(OBJDUMP) -d $(KERNEL_FILE) | less
 
-head: kernel
+head: clean kernel
 	@$(OBJDUMP) -h $(KERNEL_FILE) | less
 # 清理编译出的文件
 clean:
 	@cargo clean
 
 # 运行 QEMU
-qemu: build
-	@qemu-system-riscv64 \
-            -machine virt \
-            -nographic \
-            -bios default \
-            -device loader,file=$(BIN_FILE),addr=0x80200000
+run: build
+	@qemu-system-riscv64 -machine virt -nographic -bios ./bootloader/rustsbi-qemu.bin -device loader,file=$(BIN_FILE),addr=0x80200000 
 debug: build
-	@qemu-system-riscv64 -machine virt -nographic -bios ./bootloader/rustsbi-qemu.bin -device loader,file=target/riscv64gc-unknown-none-elf/debug/kernel.bin,addr=0x80200000 -S -s
+	@qemu-system-riscv64 -machine virt -nographic -bios ./bootloader/rustsbi-qemu.bin -device loader,file=$(BIN_FILE),addr=0x80200000 -S -s
 
 # 一键运行
 run: build qemu
