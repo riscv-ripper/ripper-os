@@ -3,16 +3,11 @@ use crate::sbi::shutdown;
 
 #[panic_handler]
 fn panic(info: &PanicInfo) -> ! {
-    match info.location() {
-        Some(location) => {
-          //  println!("[kernel] panicked at '{}', {}:{}:{}",
-          //      info.message().unwrap(),
-          //      location.file(),
-          //      location.line(),
-          //      location.column()
-          //  );
-        },
-        None => {} // println!("[kernel] panicked at '{}'", info.message().unwrap())
+    if let Some(location) = info.location() {
+        crate::println!("Panicked at {}:{} {}", location.file(), location.line(), info.message().unwrap());
+    } else {
+        crate::println!("Panicked: {}", info.message().unwrap());
     }
     shutdown()
 }
+

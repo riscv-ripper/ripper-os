@@ -6,19 +6,29 @@
 #![feature(alloc_error_handler)]
 
 mod lang_items;
+#[macro_use]
 mod console;
-
-#[allow(deprecated)]
+mod syscall;
+#[allow(warnings)]
 mod sbi;
+#[macro_use]
+mod logging;
 
 use core::panic::PanicInfo;
+use log::{info, warn, debug, error, trace};
 
 global_asm!(include_str!("entry.asm"));
 
 #[no_mangle]
 extern "C" fn rust_main() {
     clear_bss();
-    println!("hello world");
+    logging::init();
+    error!("hello rcore");
+    warn!("hello rcore");
+    info!("hello rcore");
+    debug!("hello rcore");
+    trace!("hello rcore");
+    //panic!();
     loop{};
 }
 
